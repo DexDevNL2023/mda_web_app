@@ -53,6 +53,8 @@ jobs:
     needs: setup
     steps:
       - uses: actions/checkout@v4
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
       - name: Run linter
         run: npm run lint
 
@@ -61,6 +63,8 @@ jobs:
     needs: setup
     steps:
       - uses: actions/checkout@v4
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
       - name: Run unit tests
         run: npm run test:unit
 
@@ -69,6 +73,8 @@ jobs:
     needs: setup
     steps:
       - uses: actions/checkout@v4
+      - name: Install npm-run-all
+        run: npm install -g npm-run-all
       - name: Run Cypress E2E tests
         run: npm run test
       - name: Upload Cypress HTML report
