@@ -1,101 +1,101 @@
-# name: Cypress Tests
-
-# on:
-#   push:
-#     branches: [main]
-#   pull_request:
-
-# jobs:
-#   cypress-run:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - uses: actions/checkout@v4
-
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: '22'
-
-#       - name: Install dependencies
-#         run: npm ci
-
-#       - name: Run tests and generate report
-#         run: npm run test
-
-#       - name: Upload HTML report
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: cypress-report
-#           path: cypress/reports/html/final-report.html
-
 name: Cypress Tests CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop, release/*, feature/*]
+    branches: [main]
   pull_request:
 
 jobs:
-  setup:
+  cypress-run:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
       - name: Install dependencies
         run: npm ci
 
-  lint:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Angular CLI
-        run: npm install -g @angular/cli
-      - name: Run linter
-        run: npm run lint
-
-  unit-test:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Angular CLI
-        run: npm install -g @angular/cli
-      - name: Run unit tests
-        run: npm run test:unit
-
-  e2e-test:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install npm-run-all
-        run: npm install -g npm-run-all
-      - name: Run Cypress E2E tests
+      - name: Run tests and generate report
         run: npm run test
-      - name: Upload Cypress HTML report
+
+      - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
           name: cypress-report
           path: cypress/reports/html/final-report.html
 
-  build:
-    runs-on: ubuntu-latest
-    needs: [lint, unit-test, e2e-test]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build app
-        run: npm run build
+# name: Cypress Tests CI/CD Pipeline
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Deploy to production
-        run: echo "Deploy step here"
+# on:
+#   push:
+#     branches: [main, develop, release/*, feature/*]
+#   pull_request:
+
+# jobs:
+#   setup:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: '22'
+#       - name: Install dependencies
+#         run: npm ci
+
+#   lint:
+#     runs-on: ubuntu-latest
+#     needs: setup
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Install Angular CLI
+#         run: npm install -g @angular/cli
+#       - name: Run linter
+#         run: npm run lint
+
+#   unit-test:
+#     runs-on: ubuntu-latest
+#     needs: setup
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Install Angular CLI
+#         run: npm install -g @angular/cli
+#       - name: Run unit tests
+#         run: npm run test:unit
+
+#   e2e-test:
+#     runs-on: ubuntu-latest
+#     needs: setup
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Install npm-run-all
+#         run: npm install -g npm-run-all
+#       - name: Run Cypress E2E tests
+#         run: npm run test
+#       - name: Upload Cypress HTML report
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: cypress-report
+#           path: cypress/reports/html/final-report.html
+
+#   build:
+#     runs-on: ubuntu-latest
+#     needs: [lint, unit-test, e2e-test]
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Build app
+#         run: npm run build
+
+#   deploy:
+#     runs-on: ubuntu-latest
+#     needs: build
+#     if: github.ref == 'refs/heads/main'
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Deploy to production
+#         run: echo "Deploy step here"
