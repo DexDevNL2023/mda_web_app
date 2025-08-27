@@ -1,31 +1,95 @@
-name: Cypress Tests
+# name: Cypress Tests
+
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+
+# jobs:
+#   cypress-run:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v4
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: '22'
+
+#       - name: Install dependencies
+#         run: npm ci
+
+#       - name: Run tests and generate report
+#         run: npm run test
+
+#       - name: Upload HTML report
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: cypress-report
+#           path: cypress/reports/html/final-report.html
+
+name: Cypress Tests CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop, release/*, feature/*]
   pull_request:
 
 jobs:
-  cypress-run:
+  setup:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests and generate report
-        run: npm run test
+  lint:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run linter
+        run: npm run lint
 
-      - name: Upload HTML report
+  unit-test:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run unit tests
+        run: npm run test:unit
+
+  e2e-test:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Cypress E2E tests
+        run: npm run test
+      - name: Upload Cypress HTML report
         uses: actions/upload-artifact@v4
         with:
           name: cypress-report
           path: cypress/reports/html/final-report.html
-          
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [lint, unit-test, e2e-test]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build app
+        run: npm run build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to production
+        run: echo "Deploy step here"
