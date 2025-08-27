@@ -1,0 +1,245 @@
+{
+  "stats": {
+    "suites": 2,
+    "tests": 7,
+    "passes": 7,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-08-27T15:37:03.193Z",
+    "end": "2025-08-27T15:37:09.904Z",
+    "duration": 6711,
+    "testsRegistered": 7,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "48ea2a9c-a6dd-4c30-85d8-a8298b5b05c2",
+      "title": "",
+      "fullFile": "cypress\\e2e\\todo.cy.js",
+      "file": "cypress\\e2e\\todo.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [
+        {
+          "title": "Bonjour",
+          "fullTitle": "Bonjour",
+          "timedOut": null,
+          "duration": 20,
+          "state": "passed",
+          "speed": "fast",
+          "pass": true,
+          "fail": false,
+          "pending": false,
+          "context": null,
+          "code": "",
+          "err": {},
+          "uuid": "d6e07875-bfc1-4a28-8406-8f2bde39a44f",
+          "parentUUID": "48ea2a9c-a6dd-4c30-85d8-a8298b5b05c2",
+          "isHook": false,
+          "skipped": false
+        }
+      ],
+      "suites": [
+        {
+          "uuid": "1fbd005c-7de4-46cc-b2f6-86730a7e7da6",
+          "title": "exemple d’application todo",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "affiche deux tâches par défaut",
+              "fullTitle": "exemple d’application todo affiche deux tâches par défaut",
+              "timedOut": null,
+              "duration": 1510,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// On utilise `cy.get()` pour récupérer tous les éléments qui correspondent au sélecteur.\n// Puis, avec `should`, on vérifie qu’il y a bien deux éléments correspondants,\n// ce qui correspond aux deux tâches présentes par défaut.\ncy.get('.todo-list li').should('have.length', 2);\n// On peut aller plus loin et vérifier que les tâches par défaut\n// contiennent bien le texte attendu. On utilise `first` et `last`\n// pour cibler uniquement le premier et le dernier élément,\n// puis on vérifie avec `should` que leur texte est correct.\ncy.get('.todo-list li').first().should('have.text', 'Pay electric bill');\ncy.get('.todo-list li').last().should('have.text', 'Walk the dog');",
+              "err": {},
+              "uuid": "23946cf8-76b8-4a13-a9d1-bb9e0da502fd",
+              "parentUUID": "1fbd005c-7de4-46cc-b2f6-86730a7e7da6",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "peut ajouter une nouvelle tâche",
+              "fullTitle": "exemple d’application todo peut ajouter une nouvelle tâche",
+              "timedOut": null,
+              "duration": 662,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// On stocke le texte de la nouvelle tâche dans une variable\n// afin de pouvoir le réutiliser facilement.\nconst newItem = 'Feed the cat';\n// On sélectionne l’élément input grâce à son attribut `data-test`\n// et on utilise la commande `type` pour taper le texte de la tâche.\n// Après avoir tapé le texte, on simule aussi la touche \"Entrée\" pour soumettre.\ncy.get('[data-test=new-todo]').type(`${newItem}{enter}`);\n// On vérifie ensuite que la tâche a bien été ajoutée à la liste.\n// Comme c’est la plus récente, elle doit apparaître en dernier.\n// Avec les deux tâches par défaut, il doit donc y avoir 3 éléments au total.\n// Comme les assertions renvoient l’élément testé,\n// on peut enchaîner plusieurs vérifications dans une seule instruction.\ncy.get('.todo-list li').should('have.length', 3).last().should('have.text', newItem);",
+              "err": {},
+              "uuid": "1ecd09e1-1206-4f11-a8e9-958507526c34",
+              "parentUUID": "1fbd005c-7de4-46cc-b2f6-86730a7e7da6",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "peut cocher une tâche comme terminée",
+              "fullTitle": "exemple d’application todo peut cocher une tâche comme terminée",
+              "timedOut": null,
+              "duration": 431,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// En plus de `get`, on peut utiliser `contains` pour récupérer un élément par son texte.\n// Cela renvoie ici le <label> qui contient le texte.\n// Pour cocher la case correspondante, on remonte au parent (<li>)\n// puis on cherche l’élément enfant <input type=checkbox> et on le coche avec `check()`.\ncy.contains('Pay electric bill').parent().find('input[type=checkbox]').check();\n// Une fois la case cochée, on vérifie que l’élément <li> correspondant\n// possède bien la classe CSS `completed`.\n// On repart du texte avec `contains`, on remonte avec `parents('li')`\n// et on fait l’assertion sur la classe.\ncy.contains('Pay electric bill').parents('li').should('have.class', 'completed');",
+              "err": {},
+              "uuid": "87d7e1fb-647f-472a-bd5c-01eced9ac7ba",
+              "parentUUID": "1fbd005c-7de4-46cc-b2f6-86730a7e7da6",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [
+            {
+              "uuid": "c0966d03-9b54-4b5b-b467-225b5e9ae0d4",
+              "title": "avec une tâche déjà cochée",
+              "fullFile": "",
+              "file": "",
+              "beforeHooks": [],
+              "afterHooks": [],
+              "tests": [
+                {
+                  "title": "peut filtrer les tâches non terminées",
+                  "fullTitle": "exemple d’application todo avec une tâche déjà cochée peut filtrer les tâches non terminées",
+                  "timedOut": null,
+                  "duration": 506,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "// On clique sur le bouton \"Active\"\n// pour n’afficher que les tâches non terminées.\ncy.contains('Active').click();\n// Après le filtrage, il ne doit rester qu’une seule tâche : \"Walk the dog\".\ncy.get('.todo-list li').should('have.length', 1).first().should('have.text', 'Walk the dog');\n// Et on s’assure aussi que la tâche cochée (\"Pay electric bill\")\n// n’apparaît plus dans la liste.\ncy.contains('Pay electric bill').should('not.exist');",
+                  "err": {},
+                  "uuid": "78315919-cfc1-4bcd-9c20-f98cf5f1a4c8",
+                  "parentUUID": "c0966d03-9b54-4b5b-b467-225b5e9ae0d4",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "peut filtrer les tâches terminées",
+                  "fullTitle": "exemple d’application todo avec une tâche déjà cochée peut filtrer les tâches terminées",
+                  "timedOut": null,
+                  "duration": 487,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "// Même principe, mais avec le filtre \"Completed\"\n// pour n’afficher que les tâches terminées.\ncy.contains('Completed').click();\ncy.get('.todo-list li').should('have.length', 1).first().should('have.text', 'Pay electric bill');\n// Vérification inverse : \"Walk the dog\" ne doit pas apparaître.\ncy.contains('Walk the dog').should('not.exist');",
+                  "err": {},
+                  "uuid": "dc88bbe5-4e6f-416e-894f-cf868b6a480c",
+                  "parentUUID": "c0966d03-9b54-4b5b-b467-225b5e9ae0d4",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "peut supprimer toutes les tâches terminées",
+                  "fullTitle": "exemple d’application todo avec une tâche déjà cochée peut supprimer toutes les tâches terminées",
+                  "timedOut": null,
+                  "duration": 493,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "// On clique sur le bouton \"Clear completed\".\n// La commande `contains` sert à deux choses ici :\n// - vérifier que le bouton existe (il n’apparaît que si une tâche est cochée),\n// - sélectionner ce bouton pour pouvoir cliquer dessus.\ncy.contains('Clear completed').click();\n// On vérifie ensuite qu’il ne reste plus qu’une tâche dans la liste,\n// et que \"Pay electric bill\" a bien disparu.\ncy.get('.todo-list li').should('have.length', 1).should('not.have.text', 'Pay electric bill');\n// Enfin, on vérifie que le bouton \"Clear completed\"\n// n’existe plus dans la page.\ncy.contains('Clear completed').should('not.exist');",
+                  "err": {},
+                  "uuid": "9b98c179-cc83-4db8-8b34-e8b99b7e5cb1",
+                  "parentUUID": "c0966d03-9b54-4b5b-b467-225b5e9ae0d4",
+                  "isHook": false,
+                  "skipped": false
+                }
+              ],
+              "suites": [],
+              "passes": [
+                "78315919-cfc1-4bcd-9c20-f98cf5f1a4c8",
+                "dc88bbe5-4e6f-416e-894f-cf868b6a480c",
+                "9b98c179-cc83-4db8-8b34-e8b99b7e5cb1"
+              ],
+              "failures": [],
+              "pending": [],
+              "skipped": [],
+              "duration": 1486,
+              "root": false,
+              "rootEmpty": false,
+              "_timeout": 2000
+            }
+          ],
+          "passes": [
+            "23946cf8-76b8-4a13-a9d1-bb9e0da502fd",
+            "1ecd09e1-1206-4f11-a8e9-958507526c34",
+            "87d7e1fb-647f-472a-bd5c-01eced9ac7ba"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 2603,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [
+        "d6e07875-bfc1-4a28-8406-8f2bde39a44f"
+      ],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 20,
+      "root": true,
+      "rootEmpty": false,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "current-report",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.3"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/reports",
+        "overwrite": true,
+        "html": false,
+        "json": true,
+        "embeddedScreenshots": true,
+        "reportFilename": "current-report",
+        "timestamp": false
+      },
+      "version": "6.2.0"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+stages:
+  - setup
+  - lint
+  - unit-test
+  - e2e-test
+  - build
+  - deploy
+
+setup:
+  image: node:22
+  stage: setup
+  script:
+    - npm ci
+
+lint:
+  image: node:22
+  stage: lint
+  script:
+    - npm run lint
+
+unit-test:
+  image: node:22
+  stage: unit-test
+  script:
+    - npm run test:unit
+
+e2e-test:
+  image: node:22
+  stage: e2e-test
+  script:
+    - npm run test
+  artifacts:
+    paths:
+      - cypress/reports/html/final-report.html
+    expire_in: 1 week
+
+build:
+  image: node:22
+  stage: build
+  script:
+    - npm run build
+
+deploy:
+  image: node:22
+  stage: deploy
+  script:
+    - echo "Deploy step here"
+  only:
+    - main
