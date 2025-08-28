@@ -23,3 +23,29 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+// Créer une fonction custom Cypress (cy.login) pour se connecter via formulaire
+Cypress.Commands.add("login", (username, password) => {
+  // Visite la page login si nécessaire
+  cy.visit("/login");
+
+  // Remplir les champs login
+  cy.get("input[name=username]").type(username);
+  cy.get("input[name=password]").type(password);
+
+  // Cliquer sur le bouton submit
+  cy.get("button[type=submit]").click();
+
+  // Vérifier que la connexion a réussi (ex: url ou élément visible)
+  cy.url().should("not.include", "/login");
+  cy.get(".dashboard").should("be.visible");
+});
+
+// Créer une fonction custom Cypress (cy.loginByApi) pour se connecter via API avec cy.request()
+// si ton application utilise une API pour se connecter, tu peux directement faire un cy.request()
+// et sauvegarder le token dans le localStorage, ce qui accélère les tests E2E.
+Cypress.Commands.add("loginByApi", (username, password) => {
+  cy.request("POST", "/api/login", { username, password }).then((resp) => {
+    window.localStorage.setItem("token", resp.body.token);
+  });
+});

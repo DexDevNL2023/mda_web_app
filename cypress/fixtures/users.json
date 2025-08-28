@@ -1,0 +1,5 @@
+{
+  "admin": { "username": "admin", "password": "1234" },
+  "guest": { "username": "guest", "password": "abcd" },
+  "apiUser": { "apiKey": "X-123456" }
+}
