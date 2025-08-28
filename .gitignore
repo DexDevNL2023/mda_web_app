@@ -1,1 +1,5 @@
 node_modules
+# Cypress asset folders to exclude from source control
+cypress/downloads/
+cypress/screenshots/
+cypress/videos/

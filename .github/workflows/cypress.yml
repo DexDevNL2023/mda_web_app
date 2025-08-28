@@ -29,6 +29,12 @@ jobs:
           name: cypress-report
           path: cypress/reports/html/final-report.html
 
+      - name: Upload Cypress screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/
+
 # name: Cypress Tests CI/CD Pipeline
 
 # on:

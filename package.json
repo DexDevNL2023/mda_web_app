@@ -11,9 +11,7 @@
     "cy:run": "cypress run --browser chrome",
     "pretest": "npm-run-all clean:reports create:reports",
     "start-and-test": "npm-run-all --parallel cy:run",
-    "test": "npm-run-all archive-report pretest start-and-test generate-report",
-    "lint": "ng lint",
-    "test:unit": "ng test --watch=false"
+    "test": "npm-run-all archive-report pretest start-and-test generate-report"
   },
   "keywords": [],
   "author": "",

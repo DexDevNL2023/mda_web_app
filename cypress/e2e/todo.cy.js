@@ -20,6 +20,11 @@ describe('exemple d’application todo', () => {
     cy.visit('https://example.cypress.io/todo')
   })
 
+  afterEach(() => {
+    // Capture automatique d’un screenshot après CHAQUE test
+    cy.screenshot()
+  })
+
   it('affiche deux tâches par défaut', () => {
     // On utilise `cy.get()` pour récupérer tous les éléments qui correspondent au sélecteur.
     // Puis, avec `should`, on vérifie qu’il y a bien deux éléments correspondants,
@@ -132,6 +137,27 @@ describe('exemple d’application todo', () => {
       // Enfin, on vérifie que le bouton "Clear completed"
       // n’existe plus dans la page.
       cy.contains('Clear completed').should('not.exist')
+    })
+
+    it('récupère un champ, saisit une valeur et vérifie', () => {
+      // On visite directement la page d’accueil de l’exemple Cypress.
+      cy.visit('https://example.cypress.io')
+
+      // On recherche dans la page un élément contenant le texte "type"
+      // et on clique dessus. Cela redirige vers une autre page de démonstration.
+      cy.contains('type').click()
+
+      // On vérifie que l’URL actuelle contient bien "/commands/actions".
+      // Cela prouve que le clic nous a bien redirigé vers la bonne page.
+      cy.url().should('include', '/commands/actions')
+
+      // On récupère l’input qui a la classe CSS ".action-email"
+      // et on saisit l’adresse email factice dans ce champ.
+      cy.get('.action-email').type('fake@email.com')
+
+      // Enfin, on vérifie que la valeur contenue dans l’input
+      // est bien exactement l’email que l’on vient de taper.
+      cy.get('.action-email').should('have.value', 'fake@email.com')
     })
   })
 });
