@@ -9,6 +9,7 @@ cypress:
     - npm run test
   artifacts:
     paths:
+      - cypress/videos/
       - cypress/screenshots/
       - cypress/reports/html/final-report.html
     expire_in: 1 week
