@@ -7,7 +7,7 @@
     "clean:reports": "node cypress/support/node_fs/removeDir.js",
     "create:reports": "node cypress/support/node_fs/createDir.js",
     "archive-report": "node cypress/support/node_fs/archiveReport.js",
-    "generate-report": "marge cypress/reports/current-report.json --reportDir cypress/reports/html --reportFilename final-report.html --inlineAssets",
+    "generate-report": "marge cypress/reports/current-report.json --reportDir cypress/reports --reportFilename current-report.html --inlineAssets",
     "cy:run": "cypress run --browser chrome",
     "pretest": "npm-run-all clean:reports create:reports",
     "start-and-test": "npm-run-all --parallel cy:run",

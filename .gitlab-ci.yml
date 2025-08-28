@@ -11,7 +11,7 @@ cypress:
     paths:
       - cypress/videos/
       - cypress/screenshots/
-      - cypress/reports/html/final-report.html
+      - cypress/reports/current-report.html
     expire_in: 1 week
 
 # stages:
@@ -50,7 +50,7 @@ cypress:
 #     - npm run test
 #   artifacts:
 #     paths:
-#       - cypress/reports/html/final-report.html
+#       - cypress/reports/current-report.html
 #     expire_in: 1 week
 
 # build:

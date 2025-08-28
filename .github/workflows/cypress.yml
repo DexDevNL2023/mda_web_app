@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cypress-report
-          path: cypress/reports/html/final-report.html
+          path: cypress/reports/current-report.html
 
       - name: Upload Cypress screenshots
         uses: actions/upload-artifact@v4
@@ -93,7 +93,7 @@ jobs:
 #         uses: actions/upload-artifact@v4
 #         with:
 #           name: cypress-report
-#           path: cypress/reports/html/final-report.html
+#           path: cypress/reports/current-report.html
 
 #   build:
 #     runs-on: ubuntu-latest
