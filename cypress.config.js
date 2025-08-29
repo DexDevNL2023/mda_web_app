@@ -10,19 +10,18 @@ module.exports = defineConfig({
   projectId: "td1fct",
   e2e: {
     baseUrl: "http://localhost:4200",
-    specPattern: "cypress/e2e/**/*.*{cy.js,ts,feature}",
+    specPattern: ["cypress/e2e/**/*.cy.{js,ts}", "cypress/e2e/**/*.feature"],
+    supportFile: "cypress/support/e2e.js",
+    stepDefinitions: "support/step_definitions/**/*.{js,ts}",
     experimentalStudio: true,
     async setupNodeEvents(on, config) {
-      // ⚡ Plugin Cucumber
       await addCucumberPreprocessorPlugin(on, config);
-
       on(
         "file:preprocessor",
         createBundler({
           plugins: [createEsbuildPlugin(config)],
         })
       );
-
       return config;
     },
     reporter: "mochawesome",
