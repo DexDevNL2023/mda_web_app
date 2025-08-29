@@ -4,9 +4,18 @@ module.exports = defineConfig({
   projectId: "td1fct",
   e2e: {
     baseUrl: "http://localhost:4200",
+    specPattern: "cypress/e2e/**/*.feature",
     experimentalStudio: true,
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      // ajout du plugin cucumber
+      on(
+        "file:preprocessor",
+        createBundler({
+          plugins: [createEsbuildPlugin(config)],
+        })
+      );
+      preprocessor.addCucumberPreprocessorPlugin(on, config);
+      return config;
     },
     reporter: "mochawesome",
     reporterOptions: {

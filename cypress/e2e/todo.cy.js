@@ -400,8 +400,9 @@ after(() => {
 // -------------------------
 describe("Scénarios Login", () => {
   beforeEach(() => {
-    // Avant chaque test login, repartir de la page login
-    cy.visit("/login");
+    // On inspecte la reguete de login
+    cy.cy // Avant chaque test login, repartir de la page login
+      .visit("/login");
   });
 
   it("Login avec admin valide", () => {
@@ -481,5 +482,318 @@ describe("Fonctionnalités critiques", () => {
     cy.get("input[name=amount]").type("50");
     cy.get("button[type=submit]").click();
     cy.get(".success-message").should("contain", "Transfer completed");
+  });
+});
+
+// -------------------------
+// Hooks au niveau global
+// -------------------------
+before(() => {
+  // 🔹 S'exécute UNE SEULE FOIS avant TOUS les tests du fichier.
+  cy.clearCookies();
+  cy.clearLocalStorage();
+
+  // Charger les fixtures (jeux de données)
+  cy.fixture("users.json").then((users) => {
+    cy.wrap(users.admin).as("adminUser");
+    cy.wrap(users.guest).as("guestUser");
+    cy.wrap(users.apiUser).as("apiUser");
+  });
+});
+
+beforeEach(() => {
+  // 🔹 État propre avant chaque test
+  cy.visit("/");
+});
+
+afterEach(() => {
+  // 🔹 Capture screenshot après chaque test
+  cy.screenshot();
+});
+
+after(() => {
+  // 🔹 Nettoyage final
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.log("Tous les tests terminés ✅");
+});
+
+// -------------------------
+// Tests Scénarios Login
+// -------------------------
+describe("Scénarios Login", () => {
+  beforeEach(() => {
+    // Intercepter la requête de login
+    cy.intercept("POST", "/api/login").as("loginRequest");
+    cy.visit("/login");
+  });
+
+  it("Login avec admin valide", () => {
+    cy.get("@adminUser").then((user) => {
+      cy.login(user.username, user.password);
+
+      // Attendre que la requête de login soit terminée
+      cy.wait("@loginRequest").its("response.statusCode").should("eq", 200);
+
+      // Vérifier la redirection + dashboard
+      cy.url().should("include", "/dashboard");
+      cy.get(".dashboard", { timeout: 5000 }).should("be.visible");
+    });
+  });
+
+  it("Login avec guest valide", () => {
+    cy.get("@guestUser").then((user) => {
+      cy.login(user.username, user.password);
+      cy.wait("@loginRequest").its("response.statusCode").should("eq", 200);
+      cy.url().should("include", "/dashboard");
+    });
+  });
+
+  it("Login avec mauvais mot de passe", () => {
+    cy.get("@adminUser").then((user) => {
+      cy.login(user.username, "wrongPassword");
+
+      // Attendre la réponse serveur
+      cy.wait("@loginRequest").its("response.statusCode").should("eq", 401);
+
+      cy.get(".error-message", { timeout: 3000 })
+        .should("be.visible")
+        .and("contain", "Invalid credentials");
+    });
+  });
+});
+
+// -------------------------
+// Tests Scénarios Register
+// -------------------------
+describe("Scénarios Register", () => {
+  beforeEach(() => {
+    cy.intercept("POST", "/api/register").as("registerRequest");
+    cy.visit("/register");
+  });
+
+  it("Register utilisateur valide", () => {
+    const newUser = {
+      username: "newUser",
+      password: "password123",
+      email: "newuser@test.com",
+    };
+
+    cy.get("input[name=username]").type(newUser.username);
+    cy.get("input[name=email]").type(newUser.email);
+    cy.get("input[name=password]").type(newUser.password);
+    cy.get("button[type=submit]").click();
+
+    cy.wait("@registerRequest").its("response.statusCode").should("eq", 201);
+
+    cy.get(".success-message", { timeout: 5000 })
+      .should("be.visible")
+      .and("contain", "Registration successful");
+  });
+
+  it("Register avec email déjà existant", () => {
+    cy.get("input[name=username]").type("admin");
+    cy.get("input[name=email]").type("admin@test.com");
+    cy.get("input[name=password]").type("1234");
+    cy.get("button[type=submit]").click();
+
+    cy.wait("@registerRequest").its("response.statusCode").should("eq", 409);
+
+    cy.get(".error-message", { timeout: 5000 })
+      .should("be.visible")
+      .and("contain", "Email already exists");
+  });
+});
+
+// -------------------------
+// Tests fonctionnalités critiques (paiement, transfert, etc.)
+// -------------------------
+describe("Fonctionnalités critiques", () => {
+  beforeEach(() => {
+    cy.intercept("POST", "/api/login").as("loginRequest");
+    cy.intercept("POST", "/api/payment").as("paymentRequest");
+    cy.intercept("POST", "/api/transfer").as("transferRequest");
+
+    // Se connecter avant chaque test critique
+    cy.get("@adminUser").then((user) => {
+      cy.login(user.username, user.password);
+      cy.wait("@loginRequest").its("response.statusCode").should("eq", 200);
+    });
+  });
+
+  it("Paiement utilisateur", () => {
+    cy.visit("/payment");
+    cy.get("input[name=amount]").type("100");
+    cy.get("button[type=submit]").click();
+
+    cy.wait("@paymentRequest").its("response.statusCode").should("eq", 200);
+
+    cy.get(".success-message", { timeout: 5000 })
+      .should("be.visible")
+      .and("contain", "Payment successful");
+  });
+
+  it("Transfert d'argent", () => {
+    cy.visit("/transfer");
+    cy.get("input[name=recipient]").type("guest");
+    cy.get("input[name=amount]").type("50");
+    cy.get("button[type=submit]").click();
+
+    cy.wait("@transferRequest").its("response.statusCode").should("eq", 200);
+
+    cy.get(".success-message", { timeout: 5000 })
+      .should("be.visible")
+      .and("contain", "Transfer completed");
+  });
+});
+
+// -------------------------
+// Hooks au niveau global
+// -------------------------
+before(() => {
+  cy.clearCookies();
+  cy.clearLocalStorage();
+
+  cy.fixture("users.json").then((users) => {
+    cy.wrap(users.admin).as("adminUser");
+    cy.wrap(users.guest).as("guestUser");
+    cy.wrap(users.apiUser).as("apiUser");
+  });
+});
+
+beforeEach(() => {
+  cy.visit("/");
+});
+
+afterEach(() => {
+  cy.screenshot();
+});
+
+after(() => {
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.log("Tous les tests terminés ✅");
+});
+
+// -------------------------
+// Tests Scénarios Login
+// -------------------------
+describe("Scénarios Login", () => {
+  beforeEach(() => {
+    cy.intercept("POST", "/api/login").as("loginRequest");
+    cy.visit("/login");
+  });
+
+  it("Login avec admin valide", () => {
+    cy.get("@adminUser").then((user) => {
+      cy.login(user.username, user.password);
+      cy.wait("@loginRequest").its("response.statusCode").should("eq", 200);
+
+      cy.url().should("include", "/dashboard");
+      cy.getBySel("dashboard", { timeout: 5000 }).should("be.visible");
+    });
+  });
+
+  it("Login avec guest valide", () => {
+    cy.get("@guestUser").then((user) => {
+      cy.login(user.username, user.password);
+      cy.wait("@loginRequest").its("response.statusCode").should("eq", 200);
+
+      cy.url().should("include", "/dashboard");
+    });
+  });
+
+  it("Login avec mauvais mot de passe", () => {
+    cy.get("@adminUser").then((user) => {
+      cy.login(user.username, "wrongPassword");
+      cy.wait("@loginRequest").its("response.statusCode").should("eq", 401);
+
+      cy.getBySel("error-message", { timeout: 3000 })
+        .should("be.visible")
+        .and("contain", "Invalid credentials");
+    });
+  });
+});
+
+// -------------------------
+// Tests Scénarios Register
+// -------------------------
+describe("Scénarios Register", () => {
+  beforeEach(() => {
+    cy.intercept("POST", "/api/register").as("registerRequest");
+    cy.visit("/register");
+  });
+
+  it("Register utilisateur valide", () => {
+    const newUser = {
+      username: "newUser",
+      password: "password123",
+      email: "newuser@test.com",
+    };
+
+    cy.getBySel("username-input").type(newUser.username);
+    cy.getBySel("email-input").type(newUser.email);
+    cy.getBySel("password-input").type(newUser.password);
+    cy.getBySel("submit-register").click();
+
+    cy.wait("@registerRequest").its("response.statusCode").should("eq", 201);
+
+    cy.getBySel("success-message", { timeout: 5000 })
+      .should("be.visible")
+      .and("contain", "Registration successful");
+  });
+
+  it("Register avec email déjà existant", () => {
+    cy.getBySel("username-input").type("admin");
+    cy.getBySel("email-input").type("admin@test.com");
+    cy.getBySel("password-input").type("1234");
+    cy.getBySel("submit-register").click();
+
+    cy.wait("@registerRequest").its("response.statusCode").should("eq", 409);
+
+    cy.getBySel("error-message", { timeout: 5000 })
+      .should("be.visible")
+      .and("contain", "Email already exists");
+  });
+});
+
+// -------------------------
+// Tests fonctionnalités critiques
+// -------------------------
+describe("Fonctionnalités critiques", () => {
+  beforeEach(() => {
+    cy.intercept("POST", "/api/login").as("loginRequest");
+    cy.intercept("POST", "/api/payment").as("paymentRequest");
+    cy.intercept("POST", "/api/transfer").as("transferRequest");
+
+    cy.get("@adminUser").then((user) => {
+      cy.login(user.username, user.password);
+      cy.wait("@loginRequest").its("response.statusCode").should("eq", 200);
+    });
+  });
+
+  it("Paiement utilisateur", () => {
+    cy.visit("/payment");
+    cy.getBySel("payment-amount").type("100");
+    cy.getBySel("payment-submit").click();
+
+    cy.wait("@paymentRequest").its("response.statusCode").should("eq", 200);
+
+    cy.getBySel("success-message", { timeout: 5000 })
+      .should("be.visible")
+      .and("contain", "Payment successful");
+  });
+
+  it("Transfert d'argent", () => {
+    cy.visit("/transfer");
+    cy.getBySel("transfer-recipient").type("guest");
+    cy.getBySel("transfer-amount").type("50");
+    cy.getBySel("transfer-submit").click();
+
+    cy.wait("@transferRequest").its("response.statusCode").should("eq", 200);
+
+    cy.getBySel("success-message", { timeout: 5000 })
+      .should("be.visible")
+      .and("contain", "Transfer completed");
   });
 });
